@@ -1,0 +1,26 @@
+[project]
+name = "demo_package_python" 
+version = "0.0.22"
+authors = [
+    { 
+        name = "LJ. S.A.", 
+        email = "lvjhn.mx@gmail.com"
+    }
+]
+description = "This is a sample package which follows the instructions for publishing a Python package to PyPI."
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+[project.urls] 
+"Homepage" = "https://github.com/lvjhn/demo-package-python"
+"Bug Tracker" = "https://github.com/lvjhn/demo-package-python/~/issues"
+
+[build-system]
+requires = [ "hatchling" ] 
+build-backend = "hatchling.build" 
