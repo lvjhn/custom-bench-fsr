@@ -1,5 +1,5 @@
 [project]
-name = "demo_package_python" 
+name = "custom-bench-fsr" 
 version = "0.0.22"
 authors = [
     { 
