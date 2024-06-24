@@ -1,11 +1,15 @@
 from custom_bench.benchmarker import Benchmarker 
 from custom_bench_fsr.reporter import FileSystemReporter
 
-reporter = FileSystemReporter("./results")
+reporter = FileSystemReporter(
+    outdir="./results",
+    write_mode="replace"
+)
 
 benchmarker = Benchmarker(
     name="Demo Benchmark",
-    description="Some demo benchmark."
+    description="Some demo benchmark.",
+    has_items=False
 ) 
 
 benchmarker.start()

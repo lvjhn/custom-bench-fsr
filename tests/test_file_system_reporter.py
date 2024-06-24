@@ -10,6 +10,10 @@ import shutil
 
 from custom_bench_fsr.reporter import FileSystemReporter 
 
+from custom_bench.benchmarker import Benchmarker 
+from custom_bench.context import Context
+from custom_bench.unit import Unit
+
 class TestFileSystemReporter:
     
     #
@@ -120,3 +124,51 @@ class TestFileSystemReporter:
 
         exists.assert_called_with(reporter.outdir)
         rmtree.assert_not_called()
+
+    #
+    # Test .report()
+    # 
+    def test_report(self): 
+        reporter = FileSystemReporter() 
+
+        class MockBenchmarker:
+            def __init__(self):
+                pass 
+
+        class MockContext:
+            def __init__(self):
+                pass 
+            
+        class MockUnit:
+            def __init__(self): 
+                pass 
+
+        reporter = FileSystemReporter(
+            Benchmarker = MockBenchmarker,
+            Context = MockContext,
+            Unit = MockUnit
+        )
+
+        reporter.report_benchmarker = Mock()
+        mock_benchmarker = MockBenchmarker()
+
+        reporter.report_context = Mock()
+        mock_context = MockContext()
+
+        reporter.report_unit = Mock()
+        mock_unit = MockUnit()
+
+        reporter.report(mock_benchmarker)
+        reporter.report_benchmarker.assert_called_with(mock_benchmarker)
+
+        reporter.report(mock_context)
+        reporter.report_context.assert_called_with(mock_context)
+
+        reporter.report(mock_unit)
+        reporter.report_unit.assert_called_with(mock_unit)
+
+        try:
+            reporter.report(None)
+            assert(False)
+        except Exception as e: 
+            assert("Unknown type" in repr(e))

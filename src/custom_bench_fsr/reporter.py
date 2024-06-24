@@ -1,6 +1,10 @@
 import shutil
 import os
 
+from custom_bench.benchmarker import Benchmarker 
+from custom_bench.context import Context
+from custom_bench.unit import Unit
+
 class FileSystemReporter:
     """
         Basic FileSystemReporter object. 
@@ -16,6 +20,11 @@ class FileSystemReporter:
 
         # merge or replace
         self.write_mode = kwargs.get("write_mode", "merge") 
+
+        # dependencies 
+        self.Benchmarker = kwargs.get("Benchmarker", Benchmarker)
+        self.Context = kwargs.get("Context", Context) 
+        self.Unit = kwargs.get("Unit", Unit)
 
         self.prepare() 
 
@@ -51,3 +60,12 @@ class FileSystemReporter:
         if os.path.exists(self.outdir): 
             shutil.rmtree(self.outdir)
 
+    def report(self, benchmark_item):
+        if type(benchmark_item) == self.Benchmarker:
+            self.report_benchmarker(benchmark_item)
+        elif type(benchmark_item) == self.Context:
+            self.report_context(benchmark_item) 
+        elif type(benchmark_item) == self.Unit:
+            self.report_unit(benchmark_item) 
+        else: 
+            raise Exception("Unknown type.")
