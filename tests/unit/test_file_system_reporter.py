@@ -467,3 +467,97 @@ class TestFileSystemReporter:
         assert("[SUMMARY]" in T)
         assert("[ITEMS_SUMMARY]" in T)
         assert("[ITEMS]" in T)
+
+    def test_make_plots(self): 
+
+        class MockBenchmarkItem:
+            def __init__(self): 
+                self.has_items = True
+                self.outdir = "./results"
+                self.name   = "Mock-Benchmark-Item" 
+
+            def get_duration_ns_non_outliers(self):
+                return
+
+            def get_start(self):
+                return
+
+            def get_end(self):
+                return
+
+        benchmark_item = MockBenchmarkItem()
+
+        reporter = FileSystemReporter(
+            Context = MockBenchmarkItem
+        )
+
+        reporter.resolve_names = \
+            Mock(return_value=("[MOCK-NAME]", "[MOCK-SUBNAME]")) 
+
+        benchmark_item.get_duration_ns_non_outliers = \
+            Mock(return_value="[DURATION_NS]")
+        benchmark_item.get_start = \
+            Mock(return_value="[START_TIMES]") 
+        benchmark_item.get_end = \
+            Mock(return_value="[END_TIMES]") 
+
+        reporter.make_histogram = Mock()
+        reporter.make_lines = Mock()
+        reporter.make_average_plot = Mock()
+
+        reporter.make_plots(benchmark_item)
+
+        reporter.make_histogram.assert_called_with(
+            "[DURATION_NS]",
+            "Histogram : Duration (Without Skipped)", 
+            "Duration",
+            "Frequency", 
+            "./results/[MOCK-NAME]/[MOCK-SUBNAME]/" 
+        )
+
+        reporter.make_lines.assert_called_with(
+            "[START_TIMES]",
+            "[END_TIMES]",
+            "Start Time - End Time", 
+            "Item",
+            "Time", 
+            "./results/[MOCK-NAME]/[MOCK-SUBNAME]/" 
+        )
+
+        reporter.make_average_plot.assert_called_with(
+            "[DURATION_NS]",
+            "Average Plot : Duration (Without Skipped)", 
+            "Item",
+            "Time", 
+            "./results/[MOCK-NAME]/[MOCK-SUBNAME]/" 
+        )
+
+    def test_resolve_names(self): 
+
+        class MockContext:
+            def __init__(self): 
+                self.name = "Mock-Context"
+                self.benchmarker = None
+
+        class MockBenchmarker:
+            def __init__(self):
+                self.name = "Mock-Benchmarker"
+
+        benchmarker = MockBenchmarker()
+        
+        context = MockContext()
+        context.benchmarker = benchmarker
+
+
+        reporter = FileSystemReporter(
+            Benchmarker = MockBenchmarker,
+            Context = MockContext
+        )
+
+        name, subname = reporter.resolve_names(benchmarker)
+        assert(name == "Mock-Benchmarker")
+        assert(subname == "@benchmark")
+
+        name, subname = reporter.resolve_names(context)
+        assert(name == "Mock-Benchmarker")
+        assert(subname == "Mock-Context")

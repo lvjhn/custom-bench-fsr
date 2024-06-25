@@ -343,7 +343,7 @@ class FileSystemReporter:
 
         ax1.set_title("Raw Item Durations")
         ax1.bar(range(len(items)), items)
-
+    
         ax2.set_title("Std. Dev. over Increasing No. of Items")
         ax2.plot(std)
 
